@@ -34,4 +34,25 @@ for file_number in range(1, number_of_files + 1):
 		number=file_number,
 		padding_amount=number_digits
 	))
+	
+	
+#base code
+base_10 = 231
+
+print(f"This is the number in binary: {base_10 :b}")
+# This is the number in binary: 11100111
+
+base_10 = 231
+
+print(f"This is the number in octal: {base_10 :o}")
+# This is the number in octal: 347
+
+print(f"This is the number in hexadecimal: {base_10 :x}")
+# This is the number in hexadecimal: e7
+
+print(f"This is the number in uppercase hexadecimal: {base_10 :X}")
+
+base_16 = int("E7", base=16)
+    
+print(f"This is the number in decimal: {base_16 :d}")
 
