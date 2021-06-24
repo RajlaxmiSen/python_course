@@ -56,3 +56,6 @@ base_16 = int("E7", base=16)
     
 print(f"This is the number in decimal: {base_16 :d}")
 
+#formate function 
+example_tuple = 1, 2, 3
+print(format(example_tuple))
