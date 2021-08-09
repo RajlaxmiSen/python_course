@@ -1,10 +1,14 @@
 class LockableList:
-	def __init__(self, *values, locked=False):
+    def __init__(self, *values, locked=False):
         self.values = list(values)
         self._locked = locked
 
     def __str__(self):
         return f"{self.values}"
+
+    def __repr__(self):
+        values = ", ".join([value.__repr__() for value in self.values])
+        return f"LockableList({values})"
 
     def __len__(self):
         return len(self.values)
@@ -30,3 +34,46 @@ class LockableList:
                 "LockableList indices must be integers or slices, not {}"
                 .format(invalid_type.__name__)
             )
+    
+    def __setitem__(self, i, values):
+        if self._locked:
+            raise RuntimeError(
+                "LockedList object does not support item assignment while locked"
+            )
+        
+        if isinstance(i, int):
+            # Perform conversion to positive index if necessary
+            if i < 0:
+                i = len(self.values) + i
+            
+            # Check index lies within the valid range and assign value if possible
+            if i < 0 or i >= len(self.values):
+                raise IndexError("LockableList index out of range")
+            else:
+                self.values[i] = values
+        elif isinstance(i, slice):
+            start, stop, step = i.indices(len(self.values))
+            rng = range(start, stop, step)
+            if step != 1:
+                if len(rng) != len(values):
+                    raise ValueError(
+                        "attempt to assign a sequence of size {} to extended slice of size {}"
+                        .format(len(values), len(rng))
+                    )
+                else:
+                    for index, value in zip(rng, values):
+                        self.values[index] = value
+            else:
+                self.values = self.values[:start] + values + self.values[stop:]
+        else:
+            invalid_type = type(i)
+            raise TypeError(
+                "LockableList indices must be integers or slices, not {}"
+                .format(invalid_type.__name__)
+            )
+
+    def lock(self):
+        self._locked = True
+
+    def unlock(self):
+        self._locked = False
