@@ -72,6 +72,42 @@ class LockableList:
                 .format(invalid_type.__name__)
             )
 
+    def __add__(self, other):
+        if isinstance(other, (list, LockableList)):
+            return LockableList(*(self.values + other))
+        
+        invalid_type = type(other)
+        raise TypeError(
+            'can only concatenate list or LockableList (not "{}") to LockableList'
+            .format(invalid_type.__name__)
+        )
+
+    def __radd__(self, other):
+        if isinstance(other, (list, LockableList)):
+            return LockableList(*(other + self.values)) 
+        
+        invalid_type = type(other)
+        raise TypeError(
+            'can only concatenate list or LockableList (not "{}") to LockableList'
+            .format(invalid_type.__name__)
+        )
+
+    def __iadd__(self, other):
+        if self._locked:
+            raise RuntimeError(
+                "LockedList object does not support in-place concatenation while locked"
+            )
+
+        if isinstance(other, (list, LockableList)):
+            self.values = self.values + other
+            return self
+
+        invalid_type = type(other)
+        raise TypeError(
+            'can only concatenate list or LockableList (not "{}") to LockableList'
+            .format(invalid_type.__name__)
+        )
+
     def lock(self):
         self._locked = True
 
